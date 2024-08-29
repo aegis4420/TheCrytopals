@@ -49,8 +49,8 @@ string base64Encode (vector <uint8_t>& rawBytes) {
 
 
 int main() {
-    string hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
-    vector<uint8_t> rawBytes = hexToBytes(hexString);
+    string target = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    vector<uint8_t> rawBytes = hexToBytes(target);
 
     string base64String = base64Encode(rawBytes);
 
