@@ -9,6 +9,11 @@
 
 using namespace std;
 
+static const char BASE64_ALPHABET[] =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz"
+        "0123456789+/";
+
 vector<uint8_t> hexToBytes(const string& hex) {
     vector<uint8_t> bytes;
     for (size_t i = 0; i < hex.length(); i += 2) {
@@ -18,76 +23,38 @@ vector<uint8_t> hexToBytes(const string& hex) {
     return bytes;
 }
 
-string xorWithKey(const vector<uint8_t>& rawBytes, uint8_t key) {
-    string result;
-    for (uint8_t byte : rawBytes) {
-        result += static_cast<char>(byte ^ key);
+string base64Encode (vector <uint8_t>& rawBytes) {
+    string base64;
+    size_t padding = (3 - (rawBytes.size() % 3)) % 3;
+    vector<uint8_t> paddedBytes(rawBytes);
+    
+    paddedBytes.insert(paddedBytes.end(), padding, 0);
+
+    for (size_t i = 0; i < paddedBytes.size(); i += 3) {
+        uint32_t triple = (paddedBytes[i] << 16) | (paddedBytes[i + 1] << 8) | paddedBytes[i + 2];
+        base64 += BASE64_ALPHABET[(triple >> 18) & 0x3F];
+        base64 += BASE64_ALPHABET[(triple >> 12) & 0x3F];
+        base64 += BASE64_ALPHABET[(triple >> 6) & 0x3F];
+        base64 += BASE64_ALPHABET[triple & 0x3F];
     }
-    return result;
+
+    if (padding > 0) {
+        base64.erase(base64.end() - padding, base64.end());
+        base64.append(padding, '=');
+    }
+
+    return base64;
 }
 
-double scoreEnglishText(const string& text) {
-    static const unordered_map<char, double> freq = {        
-        {'E', 12.02}, {'T', 9.10}, {'A', 8.12}, {'O', 7.68}, {'I', 7.31},
-        {'N', 6.95}, {'S', 6.28}, {'R', 6.02}, {'H', 5.92}, {'D', 4.32},
-        {'L', 3.98}, {'U', 2.88}, {'C', 2.71}, {'M', 2.61}, {'F', 2.30},
-        {'Y', 2.11}, {'W', 2.09}, {'G', 2.03}, {'P', 1.82}, {'B', 1.49},
-        {'V', 1.11}, {'K', 0.69}, {'X', 0.17}, {'Q', 0.11}, {'J', 0.10},
-        {'Z', 0.07}};
 
-    double score = 0;
-    for (char c : text) {
-        if (isalpha(c)) {
-            auto it = freq.find(toupper(c));
-            if (it != freq.end()) {
-                score += it->second;
-            }
-        }
-    }
-    return score;
-}
 
 int main() {
-    using namespace std;
+    string hexString = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    vector<uint8_t> rawBytes = hexToBytes(hexString);
 
-    ifstream file("challenge4.txt");
+    string base64String = base64Encode(rawBytes);
 
-    if (!file) {
-        cerr << "Unable to open file challenge4.txt";
-        return 1;
-    }
+    cout << "Base64 Encoded: " << base64String << endl;
 
-    vector<tuple<double, string, int, char>> results; // Store score, result, line number, key
-    string line;
-    int lineNumber = 0;
-
-    // Process each line separately
-    while (getline(file, line)) {
-        ++lineNumber;  // Increment line number
-        vector<uint8_t> rawBytes = hexToBytes(line);
-
-        for (int key = 0; key < 256; ++key) {
-            string result = xorWithKey(rawBytes, static_cast<uint8_t>(key));
-            double score = scoreEnglishText(result);
-            results.emplace_back(score, result, lineNumber, key);
-        }
-    }
-
-    // Sort results by score in descending order
-    sort(results.begin(), results.end(), [](const tuple<double, string, int, int>& a, const tuple<double, string, int, int>& b) {
-        return get<0>(a) > get<0>(b);
-    });
-
-    // Output the top 5 results
-    cout << "Top 5 results:" << endl;
-    for (int j = 0; j < 5 && j < results.size(); ++j) {
-        cout << "Rank " << (j + 1) 
-             << ": Line: " << get<2>(results[j]) 
-             << ", Key: " << get<3>(results[j]) 
-             << ", Score: " << get<0>(results[j]) 
-             << ", Result: " << get<1>(results[j]) << endl;
-    }
-
-    file.close();
     return 0;
 }
