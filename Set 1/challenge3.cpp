@@ -26,6 +26,12 @@ string xorWithKey(const vector<uint8_t>& rawBytes, uint8_t key) {
     return result;
 }
 
+
+/*
+Character frequency analysis is effective because the patterns of letter usage in English are distinctive and well-documented. 
+By comparing the frequencies of characters in a text to those expected in English, you can often determine if the text is likely written in English, 
+even if the text is encrypted or obfuscated.
+*/
 double scoreEnglishText(const string& text) {
     static const unordered_map<char, double> freq = {        
         {'E', 12.02}, {'T', 9.10}, {'A', 8.12}, {'O', 7.68}, {'I', 7.31},

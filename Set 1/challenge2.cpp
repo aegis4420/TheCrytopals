@@ -20,6 +20,9 @@ vector<uint8_t> hexToBytes(const string& hex) {
     return bytes;
 }
 
+/*
+Using rawBytes2 (key) to mask it (XOR) rawBytes1 to get the secret message.
+*/
 string xorCombination(const vector<uint8_t>& rawBytes1, const vector<uint8_t>& rawBytes2) {
     string result;
 

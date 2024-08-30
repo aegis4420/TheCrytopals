@@ -11,7 +11,7 @@ using namespace std;
 
 
 /*
-This character array will line up the char and it's number representation perfectly
+This character array will line up the char and its base64 number representation
 For example: A -> 0, d -> 29
 */
 
@@ -19,6 +19,11 @@ static const char BASE64_ALPHABET[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
         "0123456789+/";
+
+/*
+We look at the hex string by pair, like 2f or c3
+then convert the pair into a base 16 integer, because a hexdecimals are from 0 - F (16 digits)
+*/
 
 vector<uint8_t> hexToBytes(const string& hex) {
     vector<uint8_t> bytes;
@@ -29,6 +34,12 @@ vector<uint8_t> hexToBytes(const string& hex) {
     return bytes;
 }
 
+
+/*
+Base64 requires six bits (2^6 is 64). Each byte has 8 bits. Therefore, in order to transform the raw bytes to base64, we need
+the bytes to be grouped into the multiple of 6 which is 24 (8 * 3 = 24 and 6 * 4 = 24). 24 seems like a nice choice.
+Then, use the new base64 code and transform it into base64 alphabet.
+*/
 string base64Encode (vector <uint8_t>& rawBytes) {
     string base64;
     size_t padding = (3 - (rawBytes.size() % 3)) % 3;
