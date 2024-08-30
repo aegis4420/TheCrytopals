@@ -9,6 +9,12 @@
 
 using namespace std;
 
+
+/*
+This character array will line up the char and it's number representation perfectly
+For example: A -> 0, d -> 29
+*/
+
 static const char BASE64_ALPHABET[] =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz"
