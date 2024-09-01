@@ -46,8 +46,20 @@ double scoreEnglishText(const string& text) {
         if (isalpha(c)) {
             auto it = freq.find(toupper(c));
             if (it != freq.end()) {
-                score += it->second;
+                double letterScore = it->second;
+                if (islower(c)) {
+                    letterScore *= 1.2;  // Boost lowercase letters
+                } else if (isupper(c)) {
+                    letterScore *= 0.9;  // Slightly reduce score for uppercase letters
+                }
+                score += letterScore;
             }
+        } else if (isspace(c) || ispunct(c)) {
+            score += 0.1;  // Small positive score for spaces or common punctuation
+        } else if (!isprint(c)) {
+            score -= 100;  // Heavy penalty for non-printable characters
+        } else {
+            score -= 50;  // Penalty for nonsensical characters
         }
     }
     return score;

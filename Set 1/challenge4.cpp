@@ -48,8 +48,6 @@ double scoreEnglishText(const string& text) {
 }
 
 int main() {
-    using namespace std;
-
     ifstream file("challenge4.txt");
 
     if (!file) {
