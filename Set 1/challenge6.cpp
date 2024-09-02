@@ -218,7 +218,15 @@ int main() {
     vector <uint8_t> resultKeys = findBestKey(transposedBlocks);
 
     vector <uint8_t> dicypheredText = repeatingXOR(rawBytes, resultKeys);
-    
+
+
+    cout << "Best key: ";
+    for (int i = 0; i < resultKeys.size(); i++) {
+        cout << resultKeys[i];
+    }
+    cout << endl;
+
+    cout << "Plain text: ";
     for (int i = 0; i < dicypheredText.size(); i++) {
         cout << dicypheredText[i];
     }
