@@ -210,26 +210,30 @@ int main() {
 
     vector<uint8_t> rawBytes = base64ToBytes(removeNewlines(ss.str()));
 
+    for (int i = 0; i < rawBytes.size(); i++) {
+        cout << rawBytes[i];
+    }
+
     // take number of key_size bytes twice and compare the Hummington Difference
-    vector <pair<double, size_t>> resultKeySize = findBestKeySize(rawBytes);
+    // vector <pair<double, size_t>> resultKeySize = findBestKeySize(rawBytes);
     
-    vector <vector<uint8_t>> transposedBlocks = transposeBlock(rawBytes, resultKeySize[0].second);
+    // vector <vector<uint8_t>> transposedBlocks = transposeBlock(rawBytes, resultKeySize[0].second);
 
-    vector <uint8_t> resultKeys = findBestKey(transposedBlocks);
+    // vector <uint8_t> resultKeys = findBestKey(transposedBlocks);
 
-    vector <uint8_t> dicypheredText = repeatingXOR(rawBytes, resultKeys);
+    // vector <uint8_t> dicypheredText = repeatingXOR(rawBytes, resultKeys);
 
 
-    cout << "Best key: ";
-    for (int i = 0; i < resultKeys.size(); i++) {
-        cout << resultKeys[i];
-    }
-    cout << endl;
+    // cout << "Best key: ";
+    // for (int i = 0; i < resultKeys.size(); i++) {
+    //     cout << resultKeys[i];
+    // }
+    // cout << endl;
 
-    cout << "Plain text: ";
-    for (int i = 0; i < dicypheredText.size(); i++) {
-        cout << dicypheredText[i];
-    }
+    // cout << "Plain text: ";
+    // for (int i = 0; i < dicypheredText.size(); i++) {
+    //     cout << dicypheredText[i];
+    // }
 
     file.close();
     return 0;

@@ -1,13 +1,12 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <cstdint>
+#include <algorithm>
 #include <fstream>
 #include <sstream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <cstdint>
-#include <unordered_map>
-#include <tuple>
-#include <limits>
+#include <iomanip>
 
 using namespace std;
 
@@ -16,7 +15,7 @@ const string base64_chars =
              "abcdefghijklmnopqrstuvwxyz"
              "0123456789+/";
 
-vector<uint8_t> base64ToBytes(const string& base64) {
+vector <uint8_t> base64ToBytes(const string& base64) {
     vector<uint8_t> bytes;
     vector<uint8_t> T(256, 0);
     for (size_t i = 0; i < base64_chars.size(); i++) {
@@ -39,74 +38,40 @@ vector<uint8_t> base64ToBytes(const string& base64) {
     
 }
 
-// Function to compute Hamming distance between two byte vectors
-int computeHD(const vector<uint8_t>& block1, const vector<uint8_t>& block2) {
-    int distance = 0;
 
-    for (size_t i = 0; i < block1.size(); i++) {
-        int xorResult = block1[i] ^ block2[i];
-        while (xorResult) {
-            distance += xorResult & 1;
-            xorResult >>= 1;
-        }
+string bytesToBase64(const vector <uint8_t>& rawBytes) {
+    stringstream ss;
+    ss << base64_chars;
+
+    for (char c : rawBytes) {
+        
     }
 
-    return distance;
+    return ss.str();
+
 }
 
-// Function to normalize the Hamming distance for a given key size
-double normalizeHD(const vector<uint8_t>& target, size_t key_size) {
-    if (target.size() < 4 * key_size) {
-        return -1.0; // Not enough data to compare
+string byteToHex(const string& target) {
+    stringstream ss;
+    ss << hex;
+
+    for (char c : target) {
+        ss << setw(2) << setfill('0') << static_cast<int>(static_cast<unsigned char>(c));
     }
 
-    double totalDistance = 0.0;
-    size_t count = 0;
-
-    // Compare the first four blocks of size key_size
-    for (size_t i = 0; i < 4; ++i) {
-        for (size_t j = i + 1; j < 4; ++j) {
-            vector<uint8_t> block1(target.begin() + i * key_size, target.begin() + (i + 1) * key_size);
-            vector<uint8_t> block2(target.begin() + j * key_size, target.begin() + (j + 1) * key_size);
-
-            int hammingDistance = computeHD(block1, block2);
-            totalDistance += static_cast<double>(hammingDistance) / key_size;
-            ++count;
-        }
-    }
-
-    return count > 0 ? totalDistance / count : -1.0;
+    return ss.str();
 }
 
 int main() {
     
-    ifstream file("challenge6.txt");
-
-    if (!file) {
-        cerr << "Unable to open file challenge6.txt";
-        return 1;
+    vector<uint8_t> bytes;
+    vector<uint8_t> T(256, 0);
+    for (size_t i = 0; i < base64_chars.size(); i++) {
+        T[static_cast<unsigned char>(base64_chars[i])] = i;
     }
 
-    
-    stringstream ss;
-    ss << file.rdbuf();
-
-
-
-    vector<uint8_t> rawBytes = base64ToBytes(ss.str());
-
-    vector <pair<double, size_t>> result;
-    for (size_t key_size = 2; key_size < 41; key_size++) {
-        pair <double, size_t> temp (normalizeHD(rawBytes, key_size), key_size);
-        result.push_back(temp);
+    for (int i = 0; i < T.size(); i++) {
+        cout << "The char is: " << static_cast<int>(T[i]) << " Index: " << i << endl;
     }
-
-    sort(result.begin(), result.end());
-
-    for (int i = 0; i < result.size(); i++) {
-        cout << "Score: " << result[i].first << endl << "key_size: " << result[i].second << endl << endl;
-    }
-
-
     return 0;
 }
